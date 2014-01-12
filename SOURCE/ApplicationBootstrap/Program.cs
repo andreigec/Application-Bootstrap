@@ -13,30 +13,34 @@ namespace ApplicationBootstrap
     {
         private const string name = "Application Bootstrap";
         private const string version = "1.0";
-        
-        const int minflag = 2;
-        const int normalflag = 1;
-        private const int maxflag = 3;
-        const int hideflag = 0;
+
+        public enum Operation
+        {
+            None = -1, Min = 2, Max = 3, Normal = 1, Hide = 0, Close = 4
+        }
+
+
+
         //this console ptr
         static IntPtr hWnd;
 
         static void printInstructions(bool printIntro)
         {
-            ShowWindow(hWnd, normalflag);
+            ShowWindow(hWnd, (int)Operation.Normal);
             String text = "";
             if (printIntro)
             {
-                text = "\n"+name+" "+version +" developed by Andrei Gec(andreigec.net) (C)2012";
+                text = "\n" + name + " " + version + " developed by Andrei Gec(andreigec.net) (C)2012";
                 text += "\nPurpose:forces an application to minimise or maximise on startup\nUseful for applications that disregard the shortcut option that is supposed to do the same";
             }
 
-            text += "\n\nApplicationBootstrap.exe [\"path\"] [/min] [/max] [/normal]"
+            text += "\n\nApplicationBootstrap.exe [\"path\"] [/min] [/max] [/normal] [/close]"
                     + "\n\npath\tpath to executable to run"
                     + "\nmin\tafter application starts, force a minimise"
                     + "\nmax\tafter application starts, force a maximise"
+                    + "\nclose\t after application starts, close the window"
                     + "\nnormal\tafter application starts, force it to use a normal size"
-                    +"\n\nExamples:\nApplicationBootstrap.exe \"c:/program files/foobar.exe\" /min\nWill execute the program and force it to minimise"
+                    + "\n\nExamples:\nApplicationBootstrap.exe \"c:/program files/foobar.exe\" /min\nWill execute the program and force it to minimise"
                     + "\n\nApplicationBootstrap.exe \"d:/test.exe\" /max\nWill execute the program and maximise it";
             Console.WriteLine(text);
         }
@@ -50,7 +54,7 @@ namespace ApplicationBootstrap
 
         static void printErrorMessage(String msg)
         {
-            ShowWindow(hWnd, normalflag);
+            ShowWindow(hWnd, (int)Operation.Normal);
             Console.WriteLine("\nError:" + msg);
             printInstructions(false);
             KeyboardAndClose();
@@ -101,16 +105,19 @@ namespace ApplicationBootstrap
         static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
         [DllImport("user32.dll")]
-		public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
+        [DllImport("user32.dll")]
+        static extern bool CloseWindow(IntPtr hWnd);
 
         static void Main(string[] args)
         {
             String n = name + version;
-            n=n.Replace(" ","");
+            n = n.Replace(" ", "");
 
             Console.Title = n;
             hWnd = FindWindow(null, n); //put your console window caption here
-            ShowWindow(hWnd, hideflag);
+            ShowWindow(hWnd, (int)Operation.Hide);
 
             if (args.Length < 2 || args.Length > 4 || (args.Length == 1 && args[0].Equals("/?")))
             {
@@ -121,9 +128,7 @@ namespace ApplicationBootstrap
             {
                 int num = 0;
                 String path = "";
-                bool ismin = false;
-                bool ismax = false;
-                bool isnormal = false;
+                var op = Operation.None;
 
                 bool quote = false;
                 foreach (var s in args)
@@ -145,12 +150,26 @@ namespace ApplicationBootstrap
                             continue;
                         }
 
-                        if (s.ToLower().Equals("/min"))
-                            ismin = true;
-                        else if (s.ToLower().Equals("/max"))
-                            ismax = true;
-                        else if (s.ToLower().Equals("/normal"))
-                            isnormal = true;
+                        var sl = s.ToLower();
+
+                        switch (sl)
+                        {
+                            case "/min":
+                                op = Operation.Min;
+                                break;
+
+                            case "/max":
+                                op = Operation.Max;
+                                break;
+
+                            case "/normal":
+                                op = Operation.Normal;
+                                break;
+
+                            case "/close":
+                                op = Operation.Close;
+                                break;
+                        }
                     }
 
                     num++;
@@ -160,7 +179,7 @@ namespace ApplicationBootstrap
                 {
                     printErrorMessage("No Path Supplied");
                 }
-                if (ismin == false && ismax == false&&isnormal==false)
+                if (op == Operation.None)
                 {
                     printErrorMessage("Provide either min or max flag");
                 }
@@ -172,30 +191,25 @@ namespace ApplicationBootstrap
                 const int maxtimeouts = 10000;
                 int timeout = 0;
                 const int timeoutinterval = 1000;
-                
-                
-                int doflag=normalflag;
-                if (ismin)
-                    doflag = minflag;
-                else if (ismax)
-                {
-                    doflag = maxflag;
-                }
-                else if (isnormal)
-                    doflag = normalflag;
 
                 //Thread.Sleep(4000);
 
                 while (performed == false)
                 {
+                    if (op == Operation.Close)
+                    {
+                        CloseWindow(proc.MainWindowHandle);
+                        performed = true;
+                        continue;
+                    }
                     //min
-                    var a=ShowWindow(proc.MainWindowHandle, minflag);
-                   // Console.WriteLine("a="+a.ToString());
+                    var a = ShowWindow(proc.MainWindowHandle, (int)Operation.Min);
+                    // Console.WriteLine("a="+a.ToString());
                     //max
-                    var b=ShowWindow(proc.MainWindowHandle, maxflag);
+                    var b = ShowWindow(proc.MainWindowHandle, (int)Operation.Max);
                     //Console.WriteLine("b=" + b.ToString());
                     //then perform user sizing
-                    var c = ShowWindow(proc.MainWindowHandle, doflag);
+                    var c = ShowWindow(proc.MainWindowHandle, (int)op);
                     //Console.WriteLine("c=" + c.ToString());
 
                     if (c)

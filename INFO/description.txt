@@ -1,2 +1,0 @@
-Application Bootstrap forces an application to minimise or maximise on startup.
-Useful for applications that disregard the shortcut option that is supposed to do this, such as itunes.
