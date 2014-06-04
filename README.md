@@ -5,4 +5,4 @@ Useful for applications that disregard the shortcut option that is supposed to d
 
 Images
 ======
-![AB1](https://github.com/EvilSeven/Application-Bootstrap/raw/master/INFO/AB1.png)
+![AB1](https://s3-ap-southeast-2.amazonaws.com/andreigec/Application-Bootstrap/AB1.png)
