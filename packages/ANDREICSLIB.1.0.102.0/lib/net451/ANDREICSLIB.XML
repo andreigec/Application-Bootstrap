@@ -73,7 +73,7 @@
             
             </summary>
         </member>
-        <member name="M:ANDREICSLIB.ClassExtras.AssemblyExtras.GetCallingAssemblyInfo">
+        <member name="M:ANDREICSLIB.ClassExtras.AssemblyExtras.GetEntryAssemblyInfo">
             <summary>
             get assembly info
             </summary>
@@ -2825,7 +2825,7 @@
             <param name="html">The HTML.</param>
             <returns></returns>
         </member>
-        <member name="M:ANDREICSLIB.Licensing.GitHubLicensing.GetGitHubReleaseDetails(System.String)">
+        <member name="M:ANDREICSLIB.Licensing.GitHubLicensing.GetGitHubReleaseDetails(ANDREICSLIB.Licensing.LicensingDetails,System.String)">
             <summary>
             Gets the git hub release details.
             </summary>
@@ -2837,7 +2837,7 @@
             
             </summary>
         </member>
-        <member name="M:ANDREICSLIB.Licensing.Licensing.UpdateConsole(System.String,System.String)">
+        <member name="M:ANDREICSLIB.Licensing.Licensing.IsUpdateConsoleRequired(System.String,System.String)">
             <summary>
             Call this to prompt and update app via console
             </summary>
@@ -2845,7 +2845,7 @@
             <param name="otherText">The other text.</param>
             <returns></returns>
         </member>
-        <member name="M:ANDREICSLIB.Licensing.Licensing.InitialiseForm(System.Windows.Forms.Form,System.Windows.Forms.MenuStrip,ANDREICSLIB.Licensing.LicensingHelpers.SolutionDetails)">
+        <member name="M:ANDREICSLIB.Licensing.Licensing.InitialiseForm(System.Windows.Forms.Form,System.Windows.Forms.MenuStrip,ANDREICSLIB.Licensing.SolutionDetails)">
             <summary>
             Initialises the form. Add about/update toolstrip
             </summary>
@@ -2922,10 +2922,55 @@
             The change log.
             </value>
         </member>
+        <member name="P:ANDREICSLIB.Licensing.LicensingDetails.FileLocation">
+            <summary>
+            Gets or sets the file location.
+            </summary>
+            <value>
+            The file location.
+            </value>
+        </member>
         <member name="M:ANDREICSLIB.Licensing.LicensingDetails.#ctor">
             <summary>
             Initializes a new instance of the <see cref="T:ANDREICSLIB.Licensing.LicensingDetails"/> class.
             </summary>
+        </member>
+        <member name="P:ANDREICSLIB.Licensing.LicensingDetails.Callback">
+            <summary>
+            Gets or sets the callback.
+            </summary>
+            <value>
+            The callback.
+            </value>
+        </member>
+        <member name="T:ANDREICSLIB.Licensing.LicenseCallback">
+            <summary>
+            
+            </summary>
+            <param name="appRepo">The application repo.</param>
+            <returns></returns>
+        </member>
+        <member name="T:ANDREICSLIB.Licensing.SolutionDetails">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:ANDREICSLIB.Licensing.SolutionDetails.#ctor(ANDREICSLIB.Licensing.LicenseCallback,System.String,System.String,System.String,System.Version,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:ANDREICSLIB.Licensing.SolutionDetails"/> class.
+            </summary>
+            <param name="dsd">The DSD.</param>
+            <param name="helpText">The help text.</param>
+            <param name="AppName">Name of the application.</param>
+            <param name="AppRepoName">Name of the application repo.</param>
+            <param name="version">The version.</param>
+            <param name="aboutScreenOtherText">The about screen other text.</param>
+        </member>
+        <member name="M:ANDREICSLIB.Licensing.SolutionDetails.Callback">
+            <summary>
+            Callbacks this instance.
+            </summary>
+            <returns></returns>
         </member>
         <member name="T:ANDREICSLIB.Licensing.AboutScreen">
             <summary>
@@ -3078,7 +3123,7 @@
             <param name="ms">The ms.</param>
             <returns></returns>
         </member>
-        <member name="M:ANDREICSLIB.Licensing.LicensingHelpers.InitLicensing(System.Windows.Forms.Form,System.Windows.Forms.MenuStrip,ANDREICSLIB.Licensing.LicensingHelpers.SolutionDetails)">
+        <member name="M:ANDREICSLIB.Licensing.LicensingHelpers.InitLicensing(System.Windows.Forms.Form,System.Windows.Forms.MenuStrip,ANDREICSLIB.Licensing.SolutionDetails)">
             <summary>
             INIT LICENSING FOR FORM - CALL THIS
             Inserts about tab on menu strip
@@ -3101,7 +3146,7 @@
             <param name="sender">The sender.</param>
             <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
         </member>
-        <member name="M:ANDREICSLIB.Licensing.LicensingHelpers.UpdateEventConsole">
+        <member name="M:ANDREICSLIB.Licensing.LicensingHelpers.IsUpdateConsoleRequired">
             <summary>
             update process via console
             </summary>
@@ -3118,35 +3163,6 @@
             Updates the application.
             </summary>
             <param name="dsd">The DSD.</param>
-        </member>
-        <member name="T:ANDREICSLIB.Licensing.LicensingHelpers.LicenseCallback">
-            <summary>
-            
-            </summary>
-            <param name="appRepo">The application repo.</param>
-            <returns></returns>
-        </member>
-        <member name="T:ANDREICSLIB.Licensing.LicensingHelpers.SolutionDetails">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:ANDREICSLIB.Licensing.LicensingHelpers.SolutionDetails.#ctor(ANDREICSLIB.Licensing.LicensingHelpers.LicenseCallback,System.String,System.String,System.String,System.Version,System.String)">
-            <summary>
-            Initializes a new instance of the <see cref="T:ANDREICSLIB.Licensing.LicensingHelpers.SolutionDetails"/> class.
-            </summary>
-            <param name="dsd">The DSD.</param>
-            <param name="helpText">The help text.</param>
-            <param name="AppName">Name of the application.</param>
-            <param name="AppRepoName">Name of the application repo.</param>
-            <param name="version">The version.</param>
-            <param name="aboutScreenOtherText">The about screen other text.</param>
-        </member>
-        <member name="M:ANDREICSLIB.Licensing.LicensingHelpers.SolutionDetails.Callback">
-            <summary>
-            Callbacks this instance.
-            </summary>
-            <returns></returns>
         </member>
         <member name="T:ANDREICSLIB.Models.FileSizes">
             <summary>
