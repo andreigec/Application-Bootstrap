@@ -107,7 +107,7 @@ Zip Assets © SharpZipLib (http://www.sharpdevelop.net/OpenSource/SharpZipLib/)
                 proc.StartInfo = procStartInfo;
                 proc.Start();
                 return proc;
-                
+
                 // Get the output into a string
                 //string result = proc.StandardOutput.ReadToEnd();
                 // Display the command output.
@@ -131,7 +131,7 @@ Zip Assets © SharpZipLib (http://www.sharpdevelop.net/OpenSource/SharpZipLib/)
 
         public static async Task Run(string[] args)
         {
-            v = AssemblyExtras.GetCallingAssemblyInfo();
+            v = AssemblyExtras.GetEntryAssemblyInfo();
             var n = v.GetAppString();
             Console.Title = n;
 
@@ -141,8 +141,8 @@ Zip Assets © SharpZipLib (http://www.sharpdevelop.net/OpenSource/SharpZipLib/)
             if (args.Length < 2 || args.Length > 4 || (args.Length == 1 && args[0].Equals("/?")))
             {
                 printInstructions(true);
-                await Licensing.UpdateConsole(HelpString, OtherText);
-                KeyboardAndClose();
+                if (await Licensing.IsUpdateConsoleRequired(HelpString, OtherText)==false)
+                    KeyboardAndClose();
             }
             else
             {
