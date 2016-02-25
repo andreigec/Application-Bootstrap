@@ -107,6 +107,7 @@ Zip Assets © SharpZipLib (http://www.sharpdevelop.net/OpenSource/SharpZipLib/)
                 proc.StartInfo = procStartInfo;
                 proc.Start();
                 return proc;
+                
                 // Get the output into a string
                 //string result = proc.StandardOutput.ReadToEnd();
                 // Display the command output.
