@@ -1,37 +1,54 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
+using ANDREICSLIB.ClassExtras;
+using ANDREICSLIB.Helpers;
+using ANDREICSLIB.Licensing;
 
 namespace ApplicationBootstrap
 {
-    class Program
+    public static class Controller
     {
-        private const string name = "Application Bootstrap";
-        private const string version = "1.0";
+        public static AssemblyValues v;
+        private const String HelpString = "";
+
+        private static readonly String OtherText =
+            @"©" + DateTime.Now.Year +
+            @" Andrei Gec (http://www.andreigec.net)
+
+Licensed under GNU LGPL (http://www.gnu.org/)
+
+Zip Assets © SharpZipLib (http://www.sharpdevelop.net/OpenSource/SharpZipLib/)
+";
 
         public enum Operation
         {
-            None = -1, Min = 2, Max = 3, Normal = 1, Hide = 0, Close = 4
+            None = -1,
+            Min = 2,
+            Max = 3,
+            Normal = 1,
+            Hide = 0,
+            Close = 4
         }
 
-
-
         //this console ptr
-        static IntPtr hWnd;
+        private static IntPtr hWnd;
 
-        static void printInstructions(bool printIntro)
+        private static void printInstructions(bool printIntro)
         {
+
             ShowWindow(hWnd, (int)Operation.Normal);
             String text = "";
             if (printIntro)
             {
-                text = "\n" + name + " " + version + " developed by Andrei Gec(andreigec.net) (C)2012";
-                text += "\nPurpose:forces an application to minimise or maximise on startup\nUseful for applications that disregard the shortcut option that is supposed to do the same";
+                text = "\n" + v.GetAppString() + " developed by Andrei Gec(andreigec.net)";
+                text +=
+                    "\nPurpose:forces an application to minimise or maximise on startup\nUseful for applications that disregard the shortcut option that is supposed to do the same";
             }
 
             text += "\n\nApplicationBootstrap.exe [\"path\"] [/min] [/max] [/normal] [/close]"
@@ -40,19 +57,20 @@ namespace ApplicationBootstrap
                     + "\nmax\tafter application starts, force a maximise"
                     + "\nclose\t after application starts, close the window"
                     + "\nnormal\tafter application starts, force it to use a normal size"
-                    + "\n\nExamples:\nApplicationBootstrap.exe \"c:/program files/foobar.exe\" /min\nWill execute the program and force it to minimise"
+                    +
+                    "\n\nExamples:\nApplicationBootstrap.exe \"c:/program files/foobar.exe\" /min\nWill execute the program and force it to minimise"
                     + "\n\nApplicationBootstrap.exe \"d:/test.exe\" /max\nWill execute the program and maximise it";
             Console.WriteLine(text);
         }
 
-        static void KeyboardAndClose()
+        private static void KeyboardAndClose()
         {
             Console.Write("\nPress any key to exit application");
             Console.ReadKey(true);
             Environment.Exit(0);
         }
 
-        static void printErrorMessage(String msg)
+        private static void printErrorMessage(String msg)
         {
             ShowWindow(hWnd, (int)Operation.Normal);
             Console.WriteLine("\nError:" + msg);
@@ -65,7 +83,7 @@ namespace ApplicationBootstrap
         /// </summary>
         /// <param name="command">string command</param>
         /// <returns>string, as output of the command.</returns>
-        static System.Diagnostics.Process ExecuteCommandSync(object command)
+        private static System.Diagnostics.Process ExecuteCommandSync(object command)
         {
             try
             {
@@ -102,30 +120,32 @@ namespace ApplicationBootstrap
         }
 
         [DllImport("user32.dll")]
-        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
         [DllImport("user32.dll")]
         public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
         [DllImport("user32.dll")]
-        static extern bool CloseWindow(IntPtr hWnd);
+        private static extern bool CloseWindow(IntPtr hWnd);
 
-        static void Main(string[] args)
+        public static async Task Run(string[] args)
         {
-            String n = name + version;
-            n = n.Replace(" ", "");
-
+            v = AssemblyExtras.GetCallingAssemblyInfo();
+            var n = v.GetAppString();
             Console.Title = n;
+
             hWnd = FindWindow(null, n); //put your console window caption here
-            ShowWindow(hWnd, (int)Operation.Hide);
+            ShowWindow(hWnd, (int)Controller.Operation.Hide);
 
             if (args.Length < 2 || args.Length > 4 || (args.Length == 1 && args[0].Equals("/?")))
             {
                 printInstructions(true);
+                await Licensing.UpdateConsole(HelpString, OtherText);
                 KeyboardAndClose();
             }
             else
             {
+
                 int num = 0;
                 String path = "";
                 var op = Operation.None;
@@ -220,6 +240,7 @@ namespace ApplicationBootstrap
                         return;
                 }
             }
+
         }
     }
 }
